@@ -27,6 +27,11 @@ LOCAL_MODULE_RELATIVE_PATH := hw
 
 LOCAL_PROPRIETARY_MODULE := true
 
+# aud_proc_config.c and aud_filter_calc.c used to carry the .arm
+# suffix.  Per-file arm mode is gone in Android 10, and this module
+# is small enough that building all of it in arm mode is fine.
+LOCAL_ARM_MODE := arm
+
 LOCAL_CFLAGS := \
 	-D_POSIX_SOURCE \
 	-Wno-multichar \
@@ -55,8 +60,8 @@ LOCAL_C_INCLUDES += \
 
 LOCAL_SRC_FILES := \
 	audio_hw.c \
-	record_process/aud_proc_config.c.arm \
-	record_process/aud_filter_calc.c.arm \
+	record_process/aud_proc_config.c \
+	record_process/aud_filter_calc.c \
 
 ifeq ($(AUDIO_MUX_PIPE),true)
 LOCAL_SRC_FILES += audio_mux_pcm.c
