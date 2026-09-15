@@ -6,7 +6,7 @@ include $(CLEAR_VARS)
 LOCAL_SRC_FILES := gps_pc_mode.c fft.c
 
 LOCAL_MODULE := libgpspc
-LOCAL_MODULE_TAGS := debug
+LOCAL_MODULE_TAGS := optional
 
 LOCAL_C_INCLUDES := \
 	$(LOCAL_PATH)\
