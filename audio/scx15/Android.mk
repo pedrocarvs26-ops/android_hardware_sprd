@@ -27,6 +27,9 @@ LOCAL_MODULE_RELATIVE_PATH := hw
 
 LOCAL_PROPRIETARY_MODULE := true
 
+# 18.1 port: per-file .arm mode is gone; whole module in arm mode.
+LOCAL_ARM_MODE := arm
+
 LOCAL_CFLAGS := \
 	-D_POSIX_SOURCE \
 	-Wno-multichar \
@@ -55,8 +58,8 @@ LOCAL_C_INCLUDES += \
 
 LOCAL_SRC_FILES := \
 	audio_hw.c \
-	record_process/aud_proc_config.c.arm \
-	record_process/aud_filter_calc.c.arm \
+	record_process/aud_proc_config.c \
+	record_process/aud_filter_calc.c \
 
 ifeq ($(AUDIO_MUX_PIPE),true)
 LOCAL_SRC_FILES += audio_mux_pcm.c

@@ -20,8 +20,9 @@ LOCAL_PATH := $(call my-dir)
 include $(CLEAR_VARS)
 LOCAL_SRC_FILES := healthd.cpp
 LOCAL_MODULE := libhealthd.$(TARGET_BOARD_PLATFORM)
+LOCAL_HEADER_LIBRARIES := \
+	libhealthd_headers
 LOCAL_C_INCLUDES := \
-	system/core/healthd/include \
 	system/core/base/include \
 	bootable/recovery/minui/include
 
@@ -43,13 +44,16 @@ LOCAL_SRC_FILES := \
     charger/healthd_draw.cpp
 
 LOCAL_FORCE_STATIC_EXECUTABLE := true
-LOCAL_MODULE_PATH := $(TARGET_ROOT_OUT_SBIN)
-LOCAL_UNSTRIPPED_PATH := $(TARGET_ROOT_OUT_SBIN_UNSTRIPPED)
+LOCAL_GROUP_STATIC_LIBRARIES := true
+LOCAL_RECOVERY_MODULE := true
+LOCAL_MODULE_PATH := $(TARGET_OUT_EXECUTABLES)
+
+LOCAL_HEADER_LIBRARIES := \
+    libhealthd_headers
 
 LOCAL_C_INCLUDES := \
     bootable/recovery \
-    $(LOCAL_PATH)/charger \
-    system/core/healthd/include
+    $(LOCAL_PATH)/charger
 
 LOCAL_CFLAGS := -Werror
 
@@ -81,10 +85,10 @@ LOCAL_STATIC_LIBRARIES := \
     android.hardware.health@1.0-convert \
     libhidltransport \
     libhidlbase \
-    libhwbinder_noltopgo \
+    libhwbinder \
     libhealthstoragedefault \
-    libvndksupport \
     libbatterymonitor \
+    libdl \
     libminui \
     libpng \
     libz \
@@ -99,6 +103,7 @@ ifeq ($(strip $(BOARD_CHARGER_ENABLE_SUSPEND)),true)
 LOCAL_STATIC_LIBRARIES += libsuspend
 endif
 
-LOCAL_HAL_STATIC_LIBRARIES := libhealthd
+# 18.1 port: LOCAL_HAL_STATIC_LIBRARIES is obsolete; link the board lib directly.
+LOCAL_STATIC_LIBRARIES += libhealthd.$(TARGET_BOARD_PLATFORM)
 
 include $(BUILD_EXECUTABLE)

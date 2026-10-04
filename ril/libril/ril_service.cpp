@@ -8632,6 +8632,14 @@ int radio::oemHookRawInd(int slotId,
     return 0;
 }
 
+/* Android 11: HIDL aborts the process when joinRpcThreadpool() runs without a
+ * preceding configureRpcThreadpool() (HidlBinderSupport.cpp).  The legacy SPRD
+ * RIL can reach rilc_thread_pool() with registerService() bailed out early
+ * (NULL callbacks, version guard, second call), and the abort took down the
+ * whole radio HAL in a restart loop.  Track the configure ourselves instead of
+ * relying on the code path that happened to run. */
+static bool s_rpc_threadpool_configured = false;
+
 void radio::registerService(RIL_RadioFunctions *callbacks, CommandInfo *commands) {
     using namespace android::hardware;
     int simCount = 1;
@@ -8652,6 +8660,7 @@ void radio::registerService(RIL_RadioFunctions *callbacks, CommandInfo *commands
     simCount = SIM_COUNT;
     #endif
 
+    s_rpc_threadpool_configured = true;
     configureRpcThreadpool(2, true /* callerWillJoin */);
     for (int i = 0; i < simCount; i++) {
         pthread_rwlock_t *radioServiceRwlockPtr = getRadioServiceRwlock(i);
@@ -8675,6 +8684,10 @@ void radio::registerService(RIL_RadioFunctions *callbacks, CommandInfo *commands
 }
 
 void rilc_thread_pool() {
+    if (!s_rpc_threadpool_configured) {
+        configureRpcThreadpool(2, true /*callerWillJoin*/);
+        s_rpc_threadpool_configured = true;
+    }
     joinRpcThreadpool();
 }
 

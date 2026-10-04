@@ -35,7 +35,6 @@ LOCAL_CFLAGS := \
 	-DAAC_DEC_LITTLE_ENDIAN
 
 LOCAL_LDFLAGS := \
-	-Wl,--no-warn-shared-textrel
 
 LOCAL_SHARED_LIBRARIES := \
 	libstagefright \
@@ -52,5 +51,7 @@ LOCAL_SHARED_LIBRARIES := \
 
 LOCAL_MODULE := libstagefright_sprd_aacdec
 LOCAL_MODULE_TAGS := optional
+
+LOCAL_CFLAGS += -Wno-error=enum-compare-switch
 
 include $(BUILD_SHARED_LIBRARY)

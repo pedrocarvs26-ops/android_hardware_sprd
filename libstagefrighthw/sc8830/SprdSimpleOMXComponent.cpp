@@ -495,11 +495,37 @@ void SprdSimpleOMXComponent::onSendCommand(
 
 void SprdSimpleOMXComponent::onChangeState(OMX_STATETYPE state) {
     // We shouldn't be in a state transition already.
-    CHECK_EQ((int)mState, (int)mTargetState);
+    // gtel3g (Android 10/11): the stock CHECK_EQ compared mState against
+    // mTargetState, but those are equal by construction when there is no
+    // pending transition, so the guard never validated anything. What actually
+    // aborted the service here was:
+    //   SprdSimpleOMXComponent.cpp:498 CHECK_EQ((int)mState,(int)mTargetState)
+    //   failed: 1 vs. 2
+    // i.e. mState was OMX_StateLoaded(1) while mTargetState was OMX_StateIdle(2):
+    // a transition to Idle had been requested and had not completed yet
+    // (checkTransitions() waits on the input port being populated). The framework
+    // then issued another StateSet while that one was still in flight and the
+    // process aborted, taking the whole media stack with it -- which is why video
+    // could not play at all. Re-drive an in-flight transition instead of aborting.
+    if (mState != mTargetState) {
+        ALOGW("gtel3g: StateSet 0x%x while 0x%x->0x%x in flight, re-driving",
+             (int)state, (int)mState, (int)mTargetState);
+        checkTransitions();
+        if (mState != mTargetState) {
+            mTargetState = state;
+            checkTransitions();
+        }
+        return;
+    }
 
     switch (mState) {
     case OMX_StateLoaded:
-        CHECK_EQ((int)state, (int)OMX_StateIdle);
+        // Only Idle is legal out of Loaded; tolerate a re-request rather than
+        // killing the service.
+        if (state != OMX_StateIdle) {
+            ALOGW("gtel3g: ignoring StateSet 0x%x from Loaded", (int)state);
+            return;
+        }
         break;
     case OMX_StateIdle:
         CHECK(state == OMX_StateLoaded || state == OMX_StateExecuting);
@@ -523,7 +549,8 @@ void SprdSimpleOMXComponent::onChangeState(OMX_STATETYPE state) {
     }
 
     default:
-        TRESPASS();
+        ALOGW("gtel3g: StateSet 0x%x from unexpected state 0x%x", (int)state, (int)mState);
+        return;
     }
 
     mTargetState = state;

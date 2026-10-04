@@ -21,12 +21,11 @@
 #include <telephony/ril.h>
 #include <telephony/ril_cdma_sms.h>
 #include <cutils/sockets.h>
-#include <cutils/jstring.h>
+#include <hwbinder/ProcessState.h>
 #include <telephony/record_stream.h>
 #include <utils/Log.h>
 #include <utils/SystemClock.h>
 #include <pthread.h>
-#include <cutils/jstring.h>
 #include <sys/types.h>
 #include <sys/limits.h>
 #include <sys/system_properties.h>
@@ -54,6 +53,9 @@ RIL_onRequestComplete(RIL_Token t, RIL_Errno e, void *response, size_t responsel
 
 extern "C" void
 RIL_onRequestAck(RIL_Token t);
+
+extern "C" void
+initWithMmapSize();
 namespace android {
 
 #define PHONE_PROCESS "radio"
@@ -68,6 +70,9 @@ namespace android {
 
 // match with constant in RIL.java
 #define MAX_COMMAND_BYTES (8 * 1024)
+
+// Set hwbinder buffer size to 512KB
+#define HW_BINDER_MMAP_SIZE 524288
 
 // Basically: memset buffers that the client library
 // shouldn't be using anymore in an attempt to find
@@ -1306,6 +1311,11 @@ rilSocketIdToString(RIL_SOCKET_ID socket_id)
         default:
             return "not a valid RIL";
     }
+}
+
+extern "C" void
+initWithMmapSize() {
+    android::hardware::ProcessState::initWithMmapSize((size_t)(HW_BINDER_MMAP_SIZE));
 }
 
 } /* namespace android */

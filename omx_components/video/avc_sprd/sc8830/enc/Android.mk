@@ -26,7 +26,6 @@ LOCAL_CFLAGS += \
 	-Wno-error=unused-parameter \
 	-Wno-error=unused-but-set-variable
 
-LOCAL_LDFLAGS += -Wl,--no-warn-shared-textrel
 
 LOCAL_ARM_MODE := arm
 
@@ -52,5 +51,7 @@ LOCAL_CFLAGS += -DANTI_SHAKE
 endif
 
 LOCAL_HEADER_LIBRARIES += generated_kernel_headers
+
+LOCAL_CFLAGS += -Wno-error=enum-compare-switch
 
 include $(BUILD_SHARED_LIBRARY)
