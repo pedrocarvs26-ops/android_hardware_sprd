@@ -20,8 +20,9 @@ LOCAL_PATH := $(call my-dir)
 include $(CLEAR_VARS)
 LOCAL_SRC_FILES := healthd.cpp
 LOCAL_MODULE := libhealthd.$(TARGET_BOARD_PLATFORM)
+LOCAL_HEADER_LIBRARIES := \
+	libhealthd_headers
 LOCAL_C_INCLUDES := \
-	system/core/healthd/include \
 	system/core/base/include \
 	bootable/recovery/minui/include
 
@@ -46,10 +47,12 @@ LOCAL_FORCE_STATIC_EXECUTABLE := true
 LOCAL_MODULE_PATH := $(TARGET_ROOT_OUT_SBIN)
 LOCAL_UNSTRIPPED_PATH := $(TARGET_ROOT_OUT_SBIN_UNSTRIPPED)
 
+LOCAL_HEADER_LIBRARIES := \
+    libhealthd_headers
+
 LOCAL_C_INCLUDES := \
     bootable/recovery \
-    $(LOCAL_PATH)/charger \
-    system/core/healthd/include
+    $(LOCAL_PATH)/charger
 
 LOCAL_CFLAGS := -Werror
 
@@ -84,6 +87,11 @@ LOCAL_STATIC_LIBRARIES := \
     libhwbinder_noltopgo \
     libhealthstoragedefault \
     libvndksupport \
+    libbinderthreadstate \
+    libprocessgroup \
+    libcgrouprc \
+    libcgrouprc_format \
+    libjsoncpp \
     libbatterymonitor \
     libminui \
     libpng \

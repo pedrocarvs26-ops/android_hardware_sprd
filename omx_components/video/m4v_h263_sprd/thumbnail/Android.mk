@@ -30,4 +30,6 @@ LOCAL_MODULE := libstagefright_sprd_soft_mpeg4dec
 LOCAL_PROPRIETARY_MODULE := true
 LOCAL_MODULE_TAGS := optional
 
+LOCAL_CFLAGS += -Wno-error=enum-compare-switch
+
 include $(BUILD_SHARED_LIBRARY)

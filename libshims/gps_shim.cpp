@@ -58,3 +58,16 @@ extern "C" long SSL_CTX_ctrl(SSL_CTX *ctx, int cmd, long larg, void *parg) {
     (void)parg;
     return 0;
 }
+
+/* /system/vendor/bin/gpsd was linked against an OpenSSL that still exported
+ * SSLv3_client_method().  BoringSSL dropped SSLv3 entirely, so gpsd dies at
+ * load time with
+ *     CANNOT LINK EXECUTABLE: cannot locate symbol "SSLv3_client_method"
+ * and init respawns it every 5 seconds forever.  Hand it the modern
+ * version-negotiating client method instead; SSLv3 itself is long dead and
+ * nothing sane on the other end would accept it anyway.
+ */
+extern "C" const SSL_METHOD *TLS_client_method(void);
+extern "C" const SSL_METHOD *SSLv3_client_method(void) {
+    return TLS_client_method();
+}

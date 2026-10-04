@@ -31,9 +31,6 @@ LOCAL_CFLAGS := \
 	-DOSCL_EXPORT_REF= \
 	-DOSCL_IMPORT_REF=
 
-LOCAL_LDFLAGS += \
-	-Wl,--no-warn-shared-textrel
-
 LOCAL_SHARED_LIBRARIES := \
 	libstagefright \
 	libstagefright_omx \
@@ -50,5 +47,7 @@ LOCAL_SHARED_LIBRARIES := \
 
 LOCAL_MODULE := libstagefright_sprd_mp3dec
 LOCAL_MODULE_TAGS := optional
+
+LOCAL_CFLAGS += -Wno-error=enum-compare-switch
 
 include $(BUILD_SHARED_LIBRARY)

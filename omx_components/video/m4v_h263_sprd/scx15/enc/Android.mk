@@ -44,4 +44,6 @@ endif
 
 LOCAL_HEADER_LIBRARIES += generated_kernel_headers
 
+LOCAL_CFLAGS += -Wno-error=enum-compare-switch
+
 include $(BUILD_SHARED_LIBRARY)
