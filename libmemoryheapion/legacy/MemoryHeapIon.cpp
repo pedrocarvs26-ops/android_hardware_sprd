@@ -495,8 +495,10 @@ MemoryHeapIon::MemoryHeapIon(const char* device, size_t size,
     if (fd >= 0) {
             const size_t pagesize = getpagesize();
             size = ((size + pagesize-1) & ~(pagesize-1));
+            // Android 12 removeu MemoryHeapBase::setDevice (o device agora
+            // vem so pelo construtor), entao a chamada nao e' mais necessaria.
             if (mapIonFd(fd, size, memory_types, flags) == NO_ERROR) {
-                MemoryHeapBase::setDevice(device);
+                ALOGD("ion mapped: %s", device);
             }
     }else {
         ALOGE("open ion fail");

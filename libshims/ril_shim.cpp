@@ -43,8 +43,8 @@ static int (*real_strncmp)(const char*, const char *, size_t) =
     (int (*)(const char*, const char *, size_t)) dlsym(RTLD_NEXT, "strncmp");
 
 static void (*real_acquire_object)(const android::sp<android::ProcessState>& proc,
-        const android::flat_binder_object& obj, const void* who, size_t* outAshmemSize) =
-    (void (*)(const android::sp<android::ProcessState>& proc, const android::flat_binder_object& obj, const void* who, size_t* outAshmemSize))
+        const ::flat_binder_object& obj, const void* who, size_t* outAshmemSize) =
+    (void (*)(const android::sp<android::ProcessState>& proc, const ::flat_binder_object& obj, const void* who, size_t* outAshmemSize))
             dlsym(RTLD_NEXT, "_ZN7android14acquire_objectERKNS_2spINS_12ProcessStateEEERK18flat_binder_objectPKvPj");
 
 static std::vector<std::string> split(const std::string &, char);
@@ -77,7 +77,7 @@ extern "C" int _ZN7android6Parcel13writeString16EPKtj()
 
 /** void acquire_object() */
 extern "C" void _ZN7android14acquire_objectERKNS_2spINS_12ProcessStateEEERK18flat_binder_objectPKvPj(
-        const android::sp<android::ProcessState>& proc, const android::flat_binder_object& obj, const void* who, size_t* /* outAshmemSize */)
+        const android::sp<android::ProcessState>& proc, const ::flat_binder_object& obj, const void* who, size_t* /* outAshmemSize */)
 {
     real_acquire_object(proc, obj, who, NULL);
 }
