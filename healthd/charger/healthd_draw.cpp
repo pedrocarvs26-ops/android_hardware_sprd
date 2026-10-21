@@ -58,7 +58,21 @@ void HealthdDraw::redraw_screen(const animation* batt_anim, GRSurface* surf_unkn
   gr_flip();
 }
 
-void HealthdDraw::blank_screen(bool blank) { gr_fb_blank(blank); }
+void HealthdDraw::blank_screen(bool blank) {
+  gr_fb_blank(blank);
+  const char* val = blank ? "0\n" : "120\n";
+  const char* paths[] = {
+    "/sys/class/backlight/panel/brightness",
+    "/sys/devices/platform/panel/backlight/panel/brightness",
+  };
+  for (const char* p : paths) {
+    FILE* fp = fopen(p, "w");
+    if (fp) {
+      fputs(val, fp);
+      fclose(fp);
+    }
+  }
+}
 
 void HealthdDraw::clear_screen(void) {
   gr_color(0, 0, 0, 255);

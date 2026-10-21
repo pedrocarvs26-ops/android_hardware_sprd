@@ -1,0 +1,44 @@
+// Versao Android.bp do que antes era so Android.mk.
+//
+// O Soong le Android.bp e nao enxerga o Android.mk, entao
+// libmemoryheapion_sprd_legacy ficava "undefined module" para o cc_prebuilt da
+// camera sc8830, que tem DT_NEEDED real para android::MemoryHeapIon
+// (get_mm_iova, free_mm_iova, Mm_iommu_is_enabled, ...).
+//
+// Os headers de ion vem de hardware/sprd/kernel_headers/sc8810 (e' o unico
+// sc* que o mantenedor deixou na arvore e serve para o sc8830).
+
+cc_library_shared {
+    name: "libmemoryheapion_sprd_legacy",
+
+    vendor: true,
+
+    srcs: ["MemoryHeapIon.cpp"],
+
+    cflags: [
+        "-Wno-error",
+        "-Wno-unused-parameter",
+        "-Wno-conversion",
+    ],
+
+    local_include_dirs: [".", "include"],
+
+
+    shared_libs: [
+        "libbinder",
+        "liblog",
+        "libcutils",
+        "libutils",
+    ],
+
+    multilib: {
+        lib32: {
+            suffix: "",
+        },
+    },
+
+    target: {
+        darwin: { enabled: false },
+        windows: { enabled: false },
+    },
+}

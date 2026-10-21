@@ -29,9 +29,12 @@ extern "C" int _ZN7android13SensorManagerC1Ev() {
     return _ZN7android13SensorManagerD1Ev();
 }
 
-extern "C" int _ZN7android13SensorManager16createEventQueueENS_7String8Ei();
-extern "C" int _ZN7android13SensorManager16createEventQueueEv() {
-    return _ZN7android13SensorManager16createEventQueueENS_7String8Ei();
+// No Android 12 SensorManager::createEventQueue virou HIDL e a assinatura
+// antiga (String8, int) nao existe mais. O gpsd sc8830 ainda a chama, então
+// devolvemos 0 (falha) em vez de linkar contra um simbolo inexistente. O GPS
+// funciona sem fila de eventos; ele so reporta posicao.
+extern "C" int _ZN7android13SensorManager16createEventQueueENS_7String8Ei() {
+    return 0;
 }
 
 extern "C" int _ZN7android13SensorManager13getSensorListEPPKPKNS_6SensorE();

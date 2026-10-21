@@ -26,6 +26,9 @@ ifneq (,$(filter $(supported_boards),$(TARGET_BOARD_PLATFORM)))
 include $(call all-named-subdir-makefiles,$(TARGET_BOARD_PLATFORM))
 endif
 
+# legacy/Android.mk virou legacy/Android.bp (o soong nao le .mk), entao inclui-lo
+# aqui declararia o mesmo modulo duas vezes:
+#   MODULE.TARGET.SHARED_LIBRARIES.libmemoryheapion_sprd_legacy already defined
 ifeq ($(TARGET_USES_SPRD_LEGACY_CAMERA_WRAPPER),true)
-include $(SPRD_MEMORYHEAPION_PATH)/legacy/Android.mk
+# include $(SPRD_MEMORYHEAPION_PATH)/legacy/Android.mk
 endif
