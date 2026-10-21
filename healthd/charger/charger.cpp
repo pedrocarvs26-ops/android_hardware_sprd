@@ -21,6 +21,18 @@
 #include <healthd/healthd.h>
 
 #include <stdlib.h>
+#include <string>
+#include <vector>
+#include <sys/types.h>
+
+extern "C" bool SetTaskProfiles(int /*tid*/, const std::vector<std::string>& /*profiles*/, bool /*use_fd_cache*/) {
+    return true;
+}
+
+extern "C" void* android_load_sphal_library(const char* /*name*/, int /*flag*/) {
+    return nullptr;
+}
+
 #include <string.h>
 #include <cutils/klog.h>
 
